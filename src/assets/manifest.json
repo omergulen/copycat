@@ -1,0 +1,44 @@
+{
+  "name": "Podo - Shortcuts",
+  "version": "0.0.1",
+  "manifest_version": 2,
+  "description": "Podo, will help to navigate between pages to you via that extension.",
+  "homepage_url": "https://jotform.com",
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "omnibox": {
+    "keyword": "podo"
+  },
+  "background": {
+    "scripts": [
+      "background.js"
+    ]
+  },
+  "permissions": [
+    "contextMenus",
+    "storage"
+  ],
+  "web_accessible_resources": [
+    "images/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "*://*.jotform.com/*",
+        "*://*.jotform.co/*",
+        "*://*.jotform.pro/*",
+        "*://*.jotformpro.com/*"
+      ],
+      "js": [
+        "app.bundle.js"
+      ]
+    }
+  ],
+  "browser_action": {
+    "default_icon": "icons/icon19.png",
+    "default_title": "Podo Shortcuts"
+  }
+}
