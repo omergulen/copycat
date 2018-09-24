@@ -42,7 +42,6 @@ class Podo {
       if (this.matches.length < 2) {
         this.formId = this.matches[0];
       } else {
-
         this.formId = this.matches[0];
         this.viewId = this.matches[1];
       }
