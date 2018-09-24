@@ -9,7 +9,7 @@ class Podo {
    * Constructor
    */
   constructor() {
-    this.regexRule = /\d+$/;
+    this.regexRule = /\d+/g;
     this.location = window.location;
   }
 
@@ -37,8 +37,15 @@ class Podo {
    * @returns {boolean}
    */
   setFormId() {
-    if (this.pathName.match(this.regexRule)) {
-      this.formId = this.pathName.match(this.regexRule)[0];
+    this.matches = this.pathName.match(this.regexRule);
+    if (this.matches) {
+      if (this.matches.length < 2) {
+        this.formId = this.matches[0];
+      } else {
+
+        this.formId = this.matches[0];
+        this.viewId = this.matches[1];
+      }
       return true;
     } else {
       return false;
@@ -64,27 +71,44 @@ class Podo {
       {
         name: 'builder',
         title: 'Builder',
-        pattern: '/build/{formId}'
+        pattern: '/build/{formId}',
+        render: true
       },
       {
         name: 'preview',
         title: 'Preview',
-        pattern: '/{formId}'
+        pattern: '/{formId}',
+        render: true
       },
       {
         name: 'submissions',
         title: 'Submissions',
-        pattern: '/submissions/{formId}'
+        pattern: '/submissions/{formId}',
+        render: true
       },
       {
         name: 'sheets',
         title: 'Sheets',
-        pattern: '/sheets/{formId}'
+        pattern: '/sheets/{formId}',
+        render: true
+      },
+      {
+        name: 'sheets',
+        title: 'Sheets',
+        pattern: '/sheets/{formId}/{viewId}',
+        render: false
+      },
+      {
+        name: 'sheets',
+        title: 'Sheets',
+        pattern: '/sheets/{formId}/unread',
+        render: false
       },
       {
         name: 'pdf-designer',
         title: 'PDF Designer',
-        pattern: '/pdf-designer/{formId}'
+        pattern: '/pdf-designer/{formId}',
+        render: true
       }
     ];
   }
@@ -94,8 +118,15 @@ class Podo {
    * @returns {boolean}
    */
   setCurrentPattern() {
-    let pattern = this.pathName.replace(this.formId, '{formId}');
+    let pattern;
+    if (this.matches.length < 2) {
+      pattern = this.pathName.replace(this.formId, '{formId}');
+    } else {
+      pattern = this.pathName.replace(this.formId, '{formId}');
+      pattern = pattern.replace(this.viewId, '{viewId}');
+    }
     let currentPattern = this.urlPatterns.find((item) => {
+      console.log(item.pattern, pattern);
       return item.pattern === pattern
     });
     if (currentPattern) {
@@ -111,7 +142,7 @@ class Podo {
    */
   buttonsWillBeRendered() {
     return this.urlPatterns.filter((item) => {
-      return item.pattern !== this.currentPattern.pattern
+      return item.name !== this.currentPattern.name && item.render
     });
   }
 
