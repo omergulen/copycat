@@ -125,7 +125,6 @@ class Podo {
       pattern = pattern.replace(this.viewId, '{viewId}');
     }
     let currentPattern = this.urlPatterns.find((item) => {
-      console.log(item.pattern, pattern);
       return item.pattern === pattern
     });
     if (currentPattern) {
