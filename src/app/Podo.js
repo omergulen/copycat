@@ -172,8 +172,6 @@ class Podo {
     button.appendChild(anchor);
 
     return button;
-
-
   }
 
   /**
@@ -190,4 +188,7 @@ class Podo {
 
 }
 
+/**
+ * Export Podo
+ */
 export default Podo;
