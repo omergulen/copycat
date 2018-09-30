@@ -21,7 +21,7 @@ Handy links help to navigate easily between form pages.
 
 - Select **dist** folder of cloned repository.
 
-- To start using extension click [Podo icon](https://www.jotform.com/wepay/assets/img/podo.png) (it is located from right side of address bar)
+- To start using extension click [Podo icon](https://www.jotform.com/wepay/assets/img/podo.png) (it is located right side of address bar)
 
 ## Development
 
