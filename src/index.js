@@ -1,16 +1,11 @@
-import Podo from './app/Podo'
+import Tester from './app/Tester'
 
 chrome.extension.sendMessage({}, response => {
   let readyStateCheckInterval = setInterval(() => {
     if (document.readyState === "complete") {
       clearInterval(readyStateCheckInterval);
       // Check Podo Active or Not
-      chrome.storage.local.get('active', function (items) {
-        if (items.active) {
-          // PODO!
-          new Podo().start();
-        }
-      });
+      new Tester();
 
     }
   }, 10);

@@ -34,6 +34,9 @@ module.exports = {
     new CleanWebpackPlugin(['dist']),
     new CopyWebpackPlugin([
       { from: './src/background.js', to: 'background.js' },
+      { from: './src/popup.html', to: 'popup.html'},
+      { from: './src/background.html', to: 'background.html'},
+      { from: './src/popup.js', to: 'popup.js'},
       { from: './src/assets/icons', to: 'icons' },
       { from: './src/assets/manifest.json', to: 'manifest.json'}
     ])
