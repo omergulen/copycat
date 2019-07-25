@@ -16,7 +16,8 @@
     "storage",
     "declarativeContent",
     "activeTab",
-    "tabs"
+    "tabs",
+    "contextMenus"
   ],
   "web_accessible_resources": [
     "images/*"
