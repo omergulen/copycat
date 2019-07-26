@@ -1,3 +1,5 @@
+import { keyCommands } from './Constants';
+
 class Generator {
 
     constructor() {
@@ -72,7 +74,11 @@ class Generator {
                     this.code += `await globals.page.click('${command.selector}');\n`;
                     break;
                 case 'keydown':
-                    this.code += `await globals.page.type('${command.selector}', '${command.data}');\n`;
+                    if (keyCommands.includes(command.data)) {
+                        this.code += `await globals.page.keyboard.press('${command.data}');\n`;
+                    } else {
+                        this.code += `await globals.page.type('${command.selector}', '${command.data}');\n`
+                    }
                     break;
                 case 'verify-text':
                     this.code += `const editedCellContent = await globals.page.$$eval('${command.selector}', el => el[0].textContent)\n`;
@@ -98,8 +104,9 @@ class Generator {
     }
 
     generatePuppeteerCode(commands) {
-        this.addImports();
-        this.addDescription('End-to-end test for textAreaEdit', commands);
+        // this.addImports();
+        // this.addDescription('End-to-end test for textAreaEdit', commands);
+        this.addIt('DESCRIPTION', commands);
         return this.code;
     }
 }

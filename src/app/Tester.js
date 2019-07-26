@@ -1,16 +1,10 @@
 import unique from 'unique-selector';
 import Generator from './Generator';
+import { keyCommands, captureEvents, selectorOptions } from './Constants';
 
 class Tester {
-  /**
-   * Constructor
-   */
+
   constructor() {
-    this.events = ['click', 'keydown'];
-    this.options = {
-      // Array of selector types based on which the unique selector will generate
-      selectorTypes: ['ID', 'Class', 'Tag', 'NthChild']
-    }
     this.verify = this.verify.bind(this);
     this.addListener = this.addListener.bind(this);
 
@@ -48,21 +42,21 @@ class Tester {
         // var text = baseNode.textContent.trim().slice(selection.baseOffset, selection.extentOffset);
         newEntry = {
           type: data.menuItemId,
-          selector: unique(node, this.options),
+          selector: unique(node, selectorOptions),
           data: data.selectionText
         };
         break;
       case "verify-dom":
         newEntry = {
           type: data.menuItemId,
-          selector: unique(node, this.options),
+          selector: unique(node, selectorOptions),
           data: ""
         };
         break;
       case "verify-link":
         newEntry = {
           type: data.menuItemId,
-          selector: unique(node, this.options),
+          selector: unique(node, selectorOptions),
           data: data.linkUrl
         };
         break;
@@ -80,7 +74,7 @@ class Tester {
       let id = Object.keys(storeObject).length
 
       let keyCheckObject = storeObject[id - 1];
-      if (keyCheckObject && keyCheckObject.type === 'keydown' && keyCheckObject.selector === entry.selector  && entry.data !== "Enter") {
+      if (keyCheckObject && keyCheckObject.type === 'keydown' && keyCheckObject.selector === entry.selector && !keyCommands.includes(entry.data)) {
         keyCheckObject.data += entry.data;
       } else {
         storeObject[id] = entry;
@@ -97,7 +91,7 @@ class Tester {
   addListener(e) {
     let newEntry = {
       type: e.type,
-      selector: unique(e.target, this.options),
+      selector: unique(e.target, selectorOptions),
       data: e.key ? e.key : ''
     };
     this.addToStorage(newEntry);
@@ -119,13 +113,13 @@ class Tester {
   }
 
   record() {
-    this.events.forEach(event => {
+    captureEvents.forEach(event => {
       window.addEventListener(event, this.addListener)
     });
   }
 
   stop() {
-    this.events.forEach(event => {
+    captureEvents.forEach(event => {
       window.removeEventListener(event, this.addListener)
     });
 
