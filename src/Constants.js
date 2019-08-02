@@ -23,3 +23,5 @@ export const selectorOptions = {
         'NthChild'
     ]
 };
+
+export const storageKey = "commands";

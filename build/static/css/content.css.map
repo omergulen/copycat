@@ -1,0 +1,1 @@
+{"version":3,"sources":["content.css"],"names":[],"mappings":"AAGA,iBACI,UAAY","file":"static/css/content.css","sourcesContent":["/* src/content.css */\n\n\n.my-extension h1 {\n    color: #000;\n}\n\n\n\n\n// WEBPACK FOOTER //\n// ./src/content.css"],"sourceRoot":""}

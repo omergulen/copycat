@@ -1,0 +1,11 @@
+{
+  "app.css": "static/css/app.css",
+  "app.css.map": "static/css/app.css.map",
+  "app.js": "static/js/app.js",
+  "app.js.map": "static/js/app.js.map",
+  "content.css": "static/css/content.css",
+  "content.css.map": "static/css/content.css.map",
+  "content.js": "static/js/content.js",
+  "content.js.map": "static/js/content.js.map",
+  "static/media/logo.svg": "static/media/logo.5d5d9eef.svg"
+}
