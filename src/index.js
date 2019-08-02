@@ -1,12 +1,8 @@
-import Tester from './app/Tester'
+import React from 'react';
+import ReactDOM from 'react-dom';
+import './index.css';
+import App from './App';
+import registerServiceWorker from './registerServiceWorker';
 
-chrome.extension.sendMessage({}, response => {
-  let readyStateCheckInterval = setInterval(() => {
-    if (document.readyState === "complete") {
-      clearInterval(readyStateCheckInterval);
-      // Check Podo Active or Not
-      new Tester();
-
-    }
-  }, 10);
-});
+ReactDOM.render(<App />, document.getElementById('root'));
+registerServiceWorker();
