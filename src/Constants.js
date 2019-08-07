@@ -10,9 +10,17 @@ export const keyCommands = [
     'CapsLock'
 ];
 
+export const combinationKeys = [
+    'Meta',
+    'Alt',
+    'Control',
+    'Shift'
+];
+
 export const captureEvents = [
-    'click',
-    'keydown'
+    'keydown',
+    'mousedown',
+    'mouseup'
 ];
 
 export const selectorOptions = {

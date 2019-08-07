@@ -4,7 +4,7 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import unique from 'unique-selector';
 
-import { keyCommands, captureEvents, selectorOptions, storageKey } from './Constants';
+import { keyCommands, captureEvents, selectorOptions, storageKey, combinationKeys } from './Constants';
 import Generator from './Generator';
 import "./content.css";
 
@@ -12,7 +12,7 @@ import Commands from './Commands';
 
 
 const app = document.createElement('div');
-app.id = "my-extension-root";
+app.id = "testing-extension";
 
 class Main extends React.Component {
 
@@ -20,7 +20,10 @@ class Main extends React.Component {
     super(props);
     this.verify = this.verify.bind(this);
     this.prepareToAddStorage = this.prepareToAddStorage.bind(this);
-    this.state = {};
+    this.state = {
+      step: 1,
+      paused: false
+    };
 
     chrome.runtime.onMessage.addListener(
       (request, sender, sendResponse) => {
@@ -33,7 +36,8 @@ class Main extends React.Component {
 
   componentDidMount = () => {
     // APP STYLE TOGGLE STATE
-    chrome.storage.sync.get('toggle', function (res) {
+    chrome.storage.sync.get(['toggle', 'paused'], function (res) {
+      console.log(res.paused)
       app.style.display = res.toggle;
       if (res.toggle === 'block') {
         document.body.className += " toggle";
@@ -43,14 +47,31 @@ class Main extends React.Component {
     });
 
     let self = this;
+    chrome.storage.sync.get('paused', function (res) {
+      self.setState({
+        paused: res.paused
+      })
+    });
     // RECORDING STATE
     chrome.storage.sync.get('recording', function (res) {
-      if (res.recording) {
-        self.record();
-      } else {
-        self.stop();
+      switch (res.recording) {
+        case 1:
+            self.resetHandler();
+          break;
+        case 2:
+          if (self.state.paused) {
+            self.pauseHandler();
+          } else {
+            self.recordHandler();
+          }
+          break;
+        case 3:
+          self.stopHandler();
+          break;
+        default:
+          self.resetHandler();
+          break;
       }
-      this.setState({ recording: res.recording });
     });
 
     // STORAGE (HISTORY)
@@ -66,20 +87,6 @@ class Main extends React.Component {
     });
   }
 
-  save = () => {
-    let initURL = '';
-    chrome.storage.sync.get('initURL', (res) => {
-      initURL = res.initURL;
-    })
-    let self = this;
-    chrome.storage.sync.get([storageKey], function (result) {
-      var storeArray = result[storageKey] ? result[storageKey] : [];
-      var gen = new Generator();
-      // console.log(gen.generatePuppeteerCode(storeArray, initURL));
-      self.sendMessageToBackground(gen.generatePuppeteerCode(storeArray, initURL), self.state.testName);
-    });
-  }
-
   verify(data) {
     let selection = document.getSelection();
     let node = selection.baseNode.parentNode;
@@ -91,7 +98,9 @@ class Main extends React.Component {
         newEntry = {
           type: data.menuItemId,
           selector: unique(node, selectorOptions),
-          data: selection.baseNode.textContent
+          data: {
+            key: selection.baseNode.textContent
+          }
         };
         break;
       case "verify-dom":
@@ -105,10 +114,13 @@ class Main extends React.Component {
         newEntry = {
           type: data.menuItemId,
           selector: unique(node, selectorOptions),
-          data: data.linkUrl
+          data: {
+            key: data.linkUrl
+          }
         };
         break;
       default:
+        console.log("WTF")
         return;
     }
     this.addToStorage(newEntry);
@@ -120,12 +132,14 @@ class Main extends React.Component {
     while (el.parentNode) {
       el = el.parentNode;
       if (el.id === id) {
-        console.log(el);
         return true;
       }
     }
-    console.log(false);
     return false;
+  }
+
+  distance = (a, b) => {
+    return Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2))
   }
 
   addToStorage = (entry) => {
@@ -135,20 +149,66 @@ class Main extends React.Component {
       let id = Object.keys(storeArray).length
 
       let keyCheckObject = storeArray[id - 1];
+
       if (keyCheckObject) {
-        if (keyCheckObject.type === 'click' && entry.type === 'page-change') {
-          keyCheckObject.type = 'click-page-change';
-          console.log(JSON.stringify(storeArray))
+        console.log(entry)
+        switch (keyCheckObject.type) {
+
+          case 'mousedown':
+
+            if (entry.type === 'mouseup') {
+              let r = self.distance(entry.data.mousePos, keyCheckObject.data.mousePos);
+              if (r > 10) {
+                keyCheckObject.type = 'drag-and-drop'
+                keyCheckObject.data.mouseTarget = { x: entry.data.mousePos.x, y: entry.data.mousePos.y };
+              } else {
+                keyCheckObject.type = 'click';
+              }
+            }
+            else if (entry.type === 'page-change') {
+              keyCheckObject.type = 'click-page-change';
+            }
+            else if (entry.type === 'mousedown') {
+              keyCheckObject.type = 'click';
+              storeArray[id + 1] = entry;
+            }
+            else {
+              keyCheckObject.type = entry.type;
+              keyCheckObject.data = entry.data;
+              keyCheckObject.selector = entry.selector;
+            }
+            break;
+
+          case 'click':
+
+            if (entry.type === 'page-change') {
+              keyCheckObject.type = 'click-page-change';
+            } else {
+              storeArray[id] = entry;
+            }
+            break;
+
+          case 'keydown':
+
+            if (!keyCommands.includes(keyCheckObject.data.key) && keyCheckObject.selector === entry.selector && !keyCommands.includes(entry.data.key)) {
+              keyCheckObject.data.key += entry.data.key;
+            } else if (combinationKeys.includes(keyCheckObject.data.key) && keyCheckObject.selector === entry.selector && entry.data.commands && !combinationKeys.includes(entry.data.key)) {
+              entry.data.commands.forEach(command => {
+                keyCheckObject.type = 'combined-keydown';
+                keyCheckObject.data.key += '+' + entry.data.key.toUpperCase();
+              });
+            } else {
+              storeArray[id] = entry;
+            }
+            break;
+
+          default:
+            console.log(entry);
+            storeArray[id] = entry;
+            break;
         }
-        else if (keyCheckObject.type === 'keydown' && !keyCommands.includes(keyCheckObject.data) &&
-          keyCheckObject.selector === entry.selector && !keyCommands.includes(entry.data)) {
-          keyCheckObject.data += entry.data;
-        }
-        else {
-          storeArray[id] = entry;
-        }
-      }
-      else {
+      } else {
+        console.log("else", entry);
         storeArray[id] = entry;
       }
 
@@ -163,19 +223,38 @@ class Main extends React.Component {
       self.setState({ storeArray });
 
       chrome.storage.sync.set(jsonObj, function () {
-        console.log("Saved a new array item");
+        return
       });
     });
   }
 
   prepareToAddStorage(e) {
-    if (!this.isRecursivelyInId(e.target, 'my-extension-root')) {
+    if (!this.isRecursivelyInId(e.target, 'testing-extension')) {
+      let commands = [];
+      if (e.ctrlKey) commands.push('Ctrl');
+      if (e.metaKey) commands.push('Meta');
+      if (e.altKey) commands.push('Alt');
+      if (e.shiftKey) commands.push('Shift');
+
+      let code = e.key ? e.key : ''
+      let mousePos = e.pageX ? { x: e.pageX, y: e.pageY } : ''
+      let selector = unique(e.target, selectorOptions);
+      if (!selector) {
+        console.log(e.target);
+      }
       let newEntry = {
         type: e.type,
-        selector: unique(e.target, selectorOptions),
-        data: e.key ? e.key : ''
+        selector: selector,
+        data: {
+          key: code,
+          mousePos,
+          commands
+        }
       };
-      this.addToStorage(newEntry);
+
+      setTimeout(() => {
+        this.addToStorage(newEntry);
+      }, 100);
     }
 
   }
@@ -199,7 +278,7 @@ class Main extends React.Component {
     });
   }
 
-  record() {
+  record = () => {
     captureEvents.forEach(event => {
       window.addEventListener(event, this.prepareToAddStorage)
     });
@@ -209,29 +288,20 @@ class Main extends React.Component {
         selector: undefined,
         data: undefined
       };
-      setTimeout(() => this.addToStorage(newEntry));
+      setTimeout(() => this.addToStorage(newEntry), 105);
       // this.addToStorage(newEntry);
     }
-    this.storeRecordingState(true);
+    this.setState({ paused: false });
   }
 
-  stop() {
+  stop = () => {
     window.onbeforeunload = null;
     captureEvents.forEach(event => {
       window.removeEventListener(event, this.prepareToAddStorage)
     });
-    this.storeRecordingState(false);
-  }
-
-  storeRecordingState = (recordingState) => {
-    chrome.storage.sync.set({ recording: recordingState }, () => {
-      this.setState({ recording: recordingState });
-      console.log("Recording state saved", recordingState);
-    })
   }
 
   reset = () => {
-
     this.setState({ storeArray: [] }, () => {
       var jsonObj = {};
       jsonObj[storageKey] = [];
@@ -241,38 +311,111 @@ class Main extends React.Component {
     })
   }
 
-  buttonClickHandler = (event) => {
-    var requestType = event.target.id;
-    if (requestType) {
-      console.log(requestType);
-      this[requestType]()
-    }
+  save = () => {
+    let initURL = '';
+    chrome.storage.sync.get('initURL', (res) => {
+      initURL = res.initURL;
+    })
+    let self = this;
+    chrome.storage.sync.get([storageKey], function (result) {
+      var storeArray = result[storageKey] ? result[storageKey] : [];
+      var gen = new Generator();
+      // console.log(gen.generatePuppeteerCode(storeArray, initURL));
+      self.sendMessageToBackground(gen.generatePuppeteerCode(storeArray, initURL), "test_name.js");
+    });
   }
 
-  handleTestNameChange = (e) => {
-    this.setState({testName: e.target.value});
+  recordHandler = () => {
+    this.record();
+    this.storeRecordingState(2);
+  }
+
+  stopHandler = () => {
+    this.stop();
+    this.storeRecordingState(3);
+  }
+
+  resumeHandler = () => {
+    this.record();
+    this.storePausedState(false);
+    this.storeRecordingState(2);
+  }
+
+  pauseHandler = () => {
+    this.stop();
+    this.storePausedState(true);
+    this.storeRecordingState(2);
+  }
+
+  resetHandler = () => {
+    this.reset();
+    this.storeRecordingState(1);
+  }
+
+  storeRecordingState = (recordingState) => {
+    let self = this;
+    chrome.storage.sync.set({ recording: recordingState }, () => {
+      self.setState({ step: recordingState });
+    })
+  }
+
+  storePausedState = (paused) => {
+    let self = this;
+    chrome.storage.sync.set({ paused }, () => {
+      self.setState({ paused });
+    })
   }
 
   render() {
     return (
       <div className={'my-extension'}>
-        <div className={"buttons"}>
-          {this.state.recording ?
-            <button className="extensionBtn" id="stop" onClick={this.buttonClickHandler}>PAUSE</button> :
-            <button className="extensionBtn" id="record" onClick={this.buttonClickHandler}>RECORD</button>
-          }
-          <button className="extensionBtn" id="reset" onClick={this.buttonClickHandler}>RESET</button>
-          <button className="extensionBtn" id="save" onClick={this.buttonClickHandler}>SAVE</button>
+        <div className={`app app-step-${this.state.step}`}>
+          <div className="app-controls">
+            <div className="app-action-step-1">
+              <h2 className="app-title">Not Recording</h2>
+              <div className="app-buttons">
+                <button onClick={this.recordHandler} className="app-record-button">Record</button>
+              </div>
+            </div>
+            <div className="app-action-step-2">
+              <h3 className="app-subtitle">{this.state.paused ? 'Paused' : 'Recording'}</h3>
+              <h2 className="app-title">{this.state.storeArray ? this.state.storeArray.length : 0} Actions</h2>
+              <div className="app-buttons">
+                {this.state.paused ?
+                  <button onClick={this.resumeHandler} className="app-ghost-button for-resume">
+                    Resume
+                  </button>
+                  :
+                  <button onClick={this.pauseHandler} className="app-ghost-button for-pause">
+                    Pause
+                  </button>
+                }
+                <button onClick={this.stopHandler} className="app-ghost-button for-stop">
+                  Stop
+                </button>
+              </div>
+            </div>
+            <div className="app-action-step-3">
+              <h3 className="app-subtitle">Done!</h3>
+              <h2 className="app-title">{this.state.storeArray ? this.state.storeArray.length : 0} Actions</h2>
+              <div className="app-buttons">
+                <button onClick={this.resetHandler} className="app-ghost-button for-reset">
+                  Reset
+          </button>
+                <button onClick={this.save} className="app-ghost-button for-save">
+                  Save
+          </button>
+              </div>
+            </div>
+          </div>
         </div>
-        <div className={"buttons"}>
-          <input className={"testName"} placeholder="test name.js" type={"text"} value={this.state.testName} onChange={this.handleTestNameChange} />
-        </div>
+
         {this.state.storeArray ? <Commands remove={this.remove} btnClickHndlr={this.buttonClickHandler} commands={this.state.storeArray} /> : ''}
       </div>
     )
   }
 }
-app.style.display = 'none';
+
 document.body.appendChild(app);
 ReactDOM.render(<Main />, app);
 

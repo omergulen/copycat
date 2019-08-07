@@ -6,7 +6,7 @@ class Generator {
         this.code = "";
     }
 
-    get rules () {
+    get rules() {
         return {
             beforeAll: [
                 `await page.goto('${this.initURL}');`
@@ -27,7 +27,7 @@ class Generator {
 
     addRulesInner(rules) {
         rules.forEach(rule => {
-            this.code += rule + '\n';
+            this.code += '\t\t' + rule + '\n';
         });
     }
 
@@ -36,19 +36,19 @@ class Generator {
             var rules = this.rules[key];
             switch (key) {
                 case 'beforeAll':
-                    this.code += `beforeAll(async () => {\n`;
+                    this.code += `\tbeforeAll(async () => {\n`;
                     this.addRulesInner(rules);
-                    this.code += `});\n\n`;
+                    this.code += `\t});\n\n`;
                     break;
                 case 'afterAll':
-                    this.code += `afterAll(async () => {\n`;
+                    this.code += `\tafterAll(async () => {\n`;
                     this.addRulesInner(rules);
-                    this.code += `});\n\n`;
+                    this.code += `\t});\n\n`;
                     break;
                 case 'beforeEach':
-                    this.code += `beforeEach(async () => {\n`;
+                    this.code += `\tbeforeEach(async () => {\n`;
                     this.addRulesInner(rules);
-                    this.code += `};\n\n`;
+                    this.code += `\t};\n\n`;
                     break;
             }
         }
@@ -58,46 +58,61 @@ class Generator {
         if (command && command.type) {
             switch (command.type) {
                 case 'click':
-                    this.code += `await page.click('${command.selector}');\n`;
+                    this.code += `\t\tawait page.click('${command.selector}');\n`;
                     break;
                 case 'keydown':
-                    if (keyCommands.includes(command.data)) {
-                        this.code += `await page.keyboard.press('${command.data}');\n`;
+                    if (keyCommands.includes(command.data.key)) {
+                        this.code += `\t\tawait page.keyboard.press('${command.data.key}');\n`;
                     } else {
-                        this.code += `await page.type('${command.selector}', '${command.data}');\n`
+                        this.code += `\t\tawait page.type('${command.selector}', '${command.data.key}');\n`
                     }
                     break;
                 case 'verify-text':
-                    this.code += `var textContent = await page.$$eval('${command.selector}', el => el[0].textContent)\n`;
-                    this.code += `var finalTextContent = textContent.trim();\n`;
-                    this.code += `expect(finalTextContent).toBe('${command.data}');\n`;
+                    this.code += `\t\tvar textContent = await page.$$eval('${command.selector}', el => el[0].textContent)\n`;
+                    this.code += `\t\tvar finalTextContent = textContent.trim();\n`;
+                    this.code += `\t\texpect(finalTextContent).toBe('${command.data.key}');\n`;
                     break;
                 case 'verify-dom':
-                    this.code += `var elCount = await page.$$eval('${command.selector}', el => el.length);\n`
-                    this.code += `expect(elCount).toBeGreaterThan(0);\n`;
+                    this.code += `\t\tvar elCount = await page.$$eval('${command.selector}', el => el.length);\n`
+                    this.code += `\t\texpect(elCount).toBeGreaterThan(0);\n`;
                     break;
                 case 'verify-link':
-                    this.code += `var nodeLink = await page.$$eval('${command.selector}', el => el[0].href)\n`;
-                    this.code += `expect(nodeLink).toBe('${command.data}');\n`;
+                    this.code += `\t\tvar nodeLink = await page.$$eval('${command.selector}', el => el[0].href)\n`;
+                    this.code += `\t\texpect(nodeLink).toBe('${command.data.key}');\n`;
                     break;
                 case 'page-change':
-                    this.code += `await page.waitForNavigation({ waitUntil: 'load' });\n`
+                    this.code += `\t\tawait page.waitForNavigation({ waitUntil: 'load' });\n`
                     break;
                 case 'click-page-change':
-                    this.code += `await Promise.all([\n`;
-                    this.code += `page.click('${command.selector}'),\n`;
-                    this.code += `page.waitForNavigation()\n]);\n`;
+                    this.code += `\t\tawait Promise.all([\n`;
+                    this.code += `\t\t\tpage.click('${command.selector}'),\n`;
+                    this.code += `\t\t\tpage.waitForNavigation()\n\t\t]);\n`;
+                    break;
+                case 'combined-keydown':
+                    command.data.commands.forEach(com => {
+                        this.code += `\t\tawait page.keyboard.down('${com}');\n`
+                    });
+                    this.code += `\t\tawait page.keyboard.press('${command.data.key.slice(-1)}');\n`;
+                    command.data.commands.forEach(com => {
+                        this.code += `\t\tawait page.keyboard.up('${com}');\n`
+                    });
+                    break;
+                case 'drag-and-drop':
+                    this.code += `\t\tawait page.mouse.move(${command.data.mousePos.x},${command.data.mousePos.y})\n`;
+                    this.code += `\t\tawait page.mouse.down()\n`;
+                    this.code += `\t\tawait page.mouse.move(${command.data.mouseTarget.x},${command.data.mouseTarget.y})\n`;
+                    this.code += `\t\tawait page.mouse.up()\n`
                     break;
             }
         }
     }
 
     addIt(description, commands) {
-        this.code += `it('${description}', async () => {\n`;
+        this.code += `\tit('${description}', async () => {\n`;
         commands.forEach(command => {
             this.addCommand(command);
         });
-        this.code += `});\n`;
+        this.code += `\t}, 60000);\n`;
     }
 
     addDescription(description, commands) {

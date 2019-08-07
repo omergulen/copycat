@@ -4,7 +4,7 @@ body {
   font-family: sans-serif;
 }
 
-.toggle> :not(#my-extension-root) {
+.toggle> :not(#testing-extension) {
   width: calc(100% - 400px);
 }
 
@@ -43,12 +43,19 @@ body {
   justify-content: space-evenly;
 }
 
+#my-extension-root #stop {
+  width: 200px;
+  height: 200px;
+  border-radius: 100px;
+  background-color: red;
+}
+
 #my-extension-root .extensionBtn {
   width: 23%;
   height: 30px;
 }
 
-#my-extension-root .remove,
+#my-extension-root .remove, 
 #my-extension-root #reset {
   background-color: #fb3e44;
 }
@@ -122,6 +129,11 @@ body {
 #my-extension-root .keydown {
   background-color: #ccfcc6;
   color:#216583;
+}
+
+#my-extension-root .combined-keydown {
+  background-color: #f3d9ff;
+  color:#d98afd;
 }
 
 #my-extension-root .verify-text {
