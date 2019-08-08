@@ -14,17 +14,6 @@ class Generator {
         }
     }
 
-    get imports() {
-        return [
-            `const puppeteer = require('puppeteer');`,
-            `const expect = require('expect.js');`
-        ]
-    }
-
-    addImports() {
-        this.code = this.imports.reduce((acc, curr) => `${acc}\n${curr}`, this.code);
-    }
-
     addRulesInner(rules) {
         rules.forEach(rule => {
             this.code += '\t\t' + rule + '\n';
@@ -122,16 +111,6 @@ class Generator {
         this.code += `});\n`;
     }
 
-    addEnvironment(commands, initURL) {
-        this.code += `(async () => {\n`;
-        this.code += `const browser = await puppeteer.launch({ headless: false });\n`;
-        this.code += `const page = await browser.newPage();\n`;
-        this.code += `await page.goto('${initURL}');`
-        commands.forEach(command => {
-            this.addCommand(command);
-        });
-        this.code += `})();\n`;
-    }
 
     generatePuppeteerCode(commands, initURL) {
         this.initURL = initURL;
