@@ -37,7 +37,6 @@ class Main extends React.Component {
   componentDidMount = () => {
     // APP STYLE TOGGLE STATE
     chrome.storage.sync.get(['toggle', 'paused'], function (res) {
-      console.log(res.paused)
       app.style.display = res.toggle;
       if (res.toggle === 'block') {
         document.body.className += " toggle";
@@ -56,7 +55,7 @@ class Main extends React.Component {
     chrome.storage.sync.get('recording', function (res) {
       switch (res.recording) {
         case 1:
-            self.resetHandler();
+          self.resetHandler();
           break;
         case 2:
           if (self.state.paused) {
@@ -83,7 +82,7 @@ class Main extends React.Component {
 
   sendMessageToBackground = (msg, testName) => {
     chrome.runtime.sendMessage({ downloadContent: msg, testName: testName }, function (response) {
-      console.log('downloadFile content sent to bg.js', response.text);
+      return;
     });
   }
 
@@ -138,6 +137,16 @@ class Main extends React.Component {
     return false;
   }
 
+  calculateStoreLengthWithoutNulls = () => {
+    let l = 0;
+    this.state.storeArray.forEach(element => {
+      if (element) {
+        l++;
+      }
+    });
+    return l;
+  }
+
   distance = (a, b) => {
     return Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2))
   }
@@ -151,7 +160,7 @@ class Main extends React.Component {
       let keyCheckObject = storeArray[id - 1];
 
       if (keyCheckObject) {
-        console.log(entry)
+
         switch (keyCheckObject.type) {
 
           case 'mousedown':
@@ -179,10 +188,19 @@ class Main extends React.Component {
             }
             break;
 
+          case 'mouseup':
+
+            storeArray[id] = entry;
+            storeArray[id].type = 'click';
+            break;
+
           case 'click':
 
             if (entry.type === 'page-change') {
               keyCheckObject.type = 'click-page-change';
+            } else if (entry.type === 'mouseup') {
+              storeArray[id] = entry;
+              storeArray[id].type = 'click';
             } else {
               storeArray[id] = entry;
             }
@@ -197,18 +215,21 @@ class Main extends React.Component {
                 keyCheckObject.type = 'combined-keydown';
                 keyCheckObject.data.key += '+' + entry.data.key.toUpperCase();
               });
+            } else if (entry.type === 'mouseup') {
+              storeArray[id] = entry;
+              storeArray[id].type = 'click';
             } else {
               storeArray[id] = entry;
             }
             break;
 
           default:
-            console.log(entry);
+
             storeArray[id] = entry;
             break;
         }
       } else {
-        console.log("else", entry);
+
         storeArray[id] = entry;
       }
 
@@ -239,9 +260,7 @@ class Main extends React.Component {
       let code = e.key ? e.key : ''
       let mousePos = e.pageX ? { x: e.pageX, y: e.pageY } : ''
       let selector = unique(e.target, selectorOptions);
-      if (!selector) {
-        console.log(e.target);
-      }
+
       let newEntry = {
         type: e.type,
         selector: selector,
@@ -273,7 +292,7 @@ class Main extends React.Component {
       self.setState({ storeArray })
 
       chrome.storage.sync.set(jsonObj, function () {
-        console.log("Removed item: " + id + " array item");
+        return;
       });
     });
   }
@@ -306,7 +325,7 @@ class Main extends React.Component {
       var jsonObj = {};
       jsonObj[storageKey] = [];
       chrome.storage.sync.set(jsonObj, function () {
-        console.log("Storage has reset!");
+        return;
       });
     })
   }
@@ -320,7 +339,7 @@ class Main extends React.Component {
     chrome.storage.sync.get([storageKey], function (result) {
       var storeArray = result[storageKey] ? result[storageKey] : [];
       var gen = new Generator();
-      // console.log(gen.generatePuppeteerCode(storeArray, initURL));
+
       self.sendMessageToBackground(gen.generatePuppeteerCode(storeArray, initURL), "test_name.js");
     });
   }
@@ -372,14 +391,15 @@ class Main extends React.Component {
         <div className={`app app-step-${this.state.step}`}>
           <div className="app-controls">
             <div className="app-action-step-1">
-              <h2 className="app-title">Not Recording</h2>
+              <h3 className="app-title">Not Recording</h3>
               <div className="app-buttons">
                 <button onClick={this.recordHandler} className="app-record-button">Record</button>
               </div>
+              <h6 className="app-subtitle pulse">Click "Record" to start recording...</h6>
             </div>
             <div className="app-action-step-2">
-              <h3 className="app-subtitle">{this.state.paused ? 'Paused' : 'Recording'}</h3>
-              <h2 className="app-title">{this.state.storeArray ? this.state.storeArray.length : 0} Actions</h2>
+              <h3 className="app-subtitle">{this.state.paused ? 'Paused' : <span className="app-subtitle-recording">Recording</span>}</h3>
+              <h2 className="app-title">{this.state.storeArray ? this.calculateStoreLengthWithoutNulls() : 0} Actions</h2>
               <div className="app-buttons">
                 {this.state.paused ?
                   <button onClick={this.resumeHandler} className="app-ghost-button for-resume">
@@ -397,7 +417,7 @@ class Main extends React.Component {
             </div>
             <div className="app-action-step-3">
               <h3 className="app-subtitle">Done!</h3>
-              <h2 className="app-title">{this.state.storeArray ? this.state.storeArray.length : 0} Actions</h2>
+              <h2 className="app-title">{this.state.storeArray ? this.calculateStoreLengthWithoutNulls() : 0} Actions</h2>
               <div className="app-buttons">
                 <button onClick={this.resetHandler} className="app-ghost-button for-reset">
                   Reset
@@ -408,9 +428,10 @@ class Main extends React.Component {
               </div>
             </div>
           </div>
+          {this.state.storeArray ? <Commands remove={this.remove} btnClickHndlr={this.buttonClickHandler} commands={this.state.storeArray} /> : ''}
+
         </div>
 
-        {this.state.storeArray ? <Commands remove={this.remove} btnClickHndlr={this.buttonClickHandler} commands={this.state.storeArray} /> : ''}
       </div>
     )
   }
@@ -431,13 +452,13 @@ chrome.runtime.onMessage.addListener(
 function toggle() {
   if (app.style.display === "none") {
     chrome.storage.sync.set({ toggle: 'block' }, function () {
-      console.log("Toggle state saved, block.");
+
       app.style.display = "block";
       document.body.className += " toggle";
     });
   } else {
     chrome.storage.sync.set({ toggle: 'none' }, function () {
-      console.log("Toggle state saved, none.");
+
       app.style.display = "none";
       document.body.className = document.body.className.replace("toggle", "").trim();
     });

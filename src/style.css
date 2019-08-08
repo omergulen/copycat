@@ -13,6 +13,7 @@
   z-index: 999999999 !important;
   border-left: 1px solid #ddd;
   box-shadow: -4px 10px 10px rgba(0,0,0,0.2);
+  height: 100vh;
 }
 
 #testing-extension .app {
@@ -70,29 +71,25 @@
   height: 10px;
   border-radius: 50%;
   background-color: #fff;
-  -webkit-animation-name: app-pulse;
-  animation-name: app-pulse;
-  -webkit-animation-duration: 0.8s;
-  animation-duration: 0.8s;
-  -webkit-animation-iteration-count: infinite;
-  animation-iteration-count: infinite;
 }
 
-#testing-extension .app-subtitle:before {
+#testing-extension .app-subtitle-recording{
+  position: relative;
+}
+
+#testing-extension .app-subtitle-recording:before{
   content: "";
   position: absolute;
-  left: 10px;
-  top: 50%;
-  -webkit-transform: translateY(-50%);
-  transform: translateY(-50%);
+  left: -14px;
+  top: 3px;
   width: 10px;
   height: 10px;
   border-radius: 50%;
   background-color: red;
   -webkit-animation-name: app-pulse;
   animation-name: app-pulse;
-  -webkit-animation-duration: 0.8s;
-  animation-duration: 0.8s;
+  -webkit-animation-duration: 1s;
+  animation-duration: 1s;
   -webkit-animation-iteration-count: infinite;
   animation-iteration-count: infinite;
 }
@@ -100,6 +97,8 @@
 #testing-extension .app-actions {
   display: flex;
   flex-direction: column;
+  overflow: auto;
+  height: calc(100vh - 170px);
 }
 
 #testing-extension .app-action {
@@ -110,6 +109,7 @@
   border: 1px solid rgba(0, 0, 0, 0.1);
   background-color: #f4f4f4;
   position: relative;
+  margin-bottom: 4px;
 }
 
 #testing-extension .app-action+#testing-extension .app-action {
@@ -167,7 +167,7 @@
   background-color: rgba(0, 0, 0, 0.2);
 }
 
-#testing-extension .app-action:hover #testing-extension .app-action-remove {
+#testing-extension .app-action:hover .app-action-remove {
   opacity: 1;
   visibility: visible;
 }
@@ -280,6 +280,15 @@
   overflow: hidden;
   opacity: 0;
   visibility: hidden;
+}
+
+#testing-extension .pulse {
+  -webkit-animation-name: app-pulse;
+  animation-name: app-pulse;
+  -webkit-animation-duration: 1.6s;
+  animation-duration: 1.6s;
+  -webkit-animation-iteration-count: infinite;
+  animation-iteration-count: infinite;
 }
 
 @-webkit-keyframes app-pulse {
