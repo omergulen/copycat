@@ -66,11 +66,11 @@ Now click on the `LOAD UNPACKED` and browse to `[PROJECT_HOME]\build` ,This wil
 
 When you go to any website and click on extension icon, injected page will toggle.
 
-<img src="./public/extension_test.png" />
+<img src="./assets/extension_test.png" />
 
-<img src="./public/extension_test2.png" />
+<img src="./assets/extension_test2.png" />
 
-<img src="./public/close_on_hover.png" />
+<img src="./assets/close_on_hover.png" />
 
 Remove unwanted actions on hover.
 
@@ -107,7 +107,7 @@ module.exports = {
 
 Following test example in the GIF will generate such code. It starts in [my GitHub Profile](https://github.com/omergulen) and clicks one of the pinned repositories (testing-extension) and when page changes it checks for the repository title's `href` is `https://github.com/omergulen/testing-extension` or not.
 
-<img src="./public/test_example.gif" />
+<img src="./assets/test_example.gif" />
 
 ```
 describe('Test 1', () => {
@@ -167,7 +167,7 @@ It will basicly look something like that:
 
 `yarn run test` or `npm run test` will do.
 
-<img src="./public/run_test.png" />
+<img src="./assets/run_test.png" />
 
 ## Contribution
 
