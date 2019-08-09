@@ -9,6 +9,7 @@ In recording state it records the events which are stated below with the target 
 ### Supported Actions
 
 #### Click origined events
+
 | Action Key    | Description   |
 | --------------------- | ------------- |
 | `click`       | Mouse `click` event. |
@@ -16,19 +17,23 @@ In recording state it records the events which are stated below with the target 
 | `drag-and-drop` | If `mouseup` event comes after `mousedown` event and the difference between their coordinates is greater than 10. |
 
 #### Key originated events
+
 | Action Key    | Description   |
 | --------------------- | ------------- |
 | `keydown`       | Keyboard `keydown` event. It automaticly gathers the `keydown` events into one if they consecutive triggered and their selectors are the same. |
 | `combined-keydown`       | It combines special keydown events if they are trigged at the same time, example: `Ctrl+A`. |
 
 #### Page change events
+
 | Action Key    | Description   |
 | --------------------- | ------------- |
 | `page-change`       | If `onbeforeunload` event is triggered. |
 | `click-page-change` | If `onbeforeunload` event of the window comes after `click` or `mousedown` event. |
 
 #### Verify events
+
 Triggers with right click on the element and choose proper verify action.
+
 | Action Key    | Description   |
 | --------------------- | ------------- |
 | `verify-text`       | It gets the right clicked element's `text` and matches with the `textContent` of the element in the test. |
