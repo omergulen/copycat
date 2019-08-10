@@ -1,8 +1,13 @@
 {
-  "short_name": "My Extension",
-  "name": "My Extension",
+  "short_name": "Testing Extension",
+  "name": "Testing Extension",
   "version": "1.0",
   "manifest_version": 2,
+  "icons": {
+    "32": "icon32.png",
+    "64": "icon64.png",
+    "128": "icon128.png"
+  },
   "background": {
     "scripts": [
       "app/background.js"
