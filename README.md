@@ -110,9 +110,6 @@ module.exports = {
 
 Following test example in the GIF will generate such code. It starts in [my GitHub Profile](https://github.com/omergulen) and clicks one of the pinned repositories (testing-extension) and when page changes it checks for the repository title's `href` is `https://github.com/omergulen/testing-extension` or not.
 
-<img src="./assets/test_example.gif" />
-
-
 
 ```
 describe('Test 1', () => {
@@ -130,6 +127,9 @@ describe('Test 1', () => {
 	}, 60000);
 });
 ```
+
+<img src="./assets/test_example.gif" />
+
 
 ### Creating `__tests__` folder
 
