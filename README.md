@@ -1,3 +1,7 @@
+[![Chrome Web Store](https://img.shields.io/chrome-web-store/v/dlbnejfbjfikckofdndbjndhhbplmnpj.svg?colorB=%234FC828&style=flat)](https://chrome.google.com/webstore/detail/testing-extension/dlbnejfbjfikckofdndbjndhhbplmnpj)
+[![Chrome Web Store Rating](https://img.shields.io/chrome-web-store/stars/ibomigipadcieapbemkegkmadbbanbgm.svg?colorB=%234FC828&label=rating&style=flat)](https://chrome.google.com/webstore/detail/product-hunt-trending-tab/kfdccmmkggolbggggimdgbfgfgalgkjo/reviews)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/omergulen/testing-extension)
+
 # Testing Extension
 
 <img src="./public/icon128.png" />
@@ -45,6 +49,15 @@ Triggers with right click on the element and choose proper verify action.
 
 ## Installation
 
+### Google Web Store
+[Install on Chrome Web Store](https://chrome.google.com/webstore/detail/product-hunt-trending-tab/kfdccmmkggolbggggimdgbfgfgalgkjo)   
+
+<a href="https://chrome.google.com/webstore/detail/product-hunt-trending-tab/kfdccmmkggolbggggimdgbfgfgalgkjo"><img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_128x128.png" width="48" /></a>
+
+or 
+
+### Manual Installation
+
 ```
 git clone https://github.com/omergulen/testing-extension.git
 ```
@@ -59,7 +72,7 @@ yarn build
 ```
 You will see a `build` folder generated inside `[PROJECT_HOME]`
 
-## Adding Testing Extension to Chrome
+#### Adding Testing Extension to Chrome
 
 In Chrome browser, go to `chrome://extensions` page and switch on developer mode. This enables the ability to locally install a Chrome extension.
 

@@ -1,5 +1,5 @@
 {
-  "short_name": "Testing Extension",
+  "short_name": "Create a test code without writing a line of code.",
   "name": "Testing Extension",
   "version": "1.0",
   "manifest_version": 2,
