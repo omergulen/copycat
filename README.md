@@ -15,7 +15,7 @@ In recording state it records the events which are stated below with the target 
 
 ### Supported Actions
 
-#### Click origined events
+#### Click origined events
 
 | Action Key    | Description   |
 | --------------------- | ------------- |
@@ -119,11 +119,10 @@ module.exports = {
 }
 ```
 
-### Basic Test Output Code
+### Basic Test Output Code
 
 Following test example in the GIF will generate such code. It starts in [my GitHub Profile](https://github.com/omergulen) and clicks one of the pinned repositories (testing-extension) and when page changes it checks for the repository title's `href` is `https://github.com/omergulen/testing-extension` or not.
 
-<img src="./assets/test_example.gif" />
 
 ```
 describe('Test 1', () => {
@@ -141,6 +140,9 @@ describe('Test 1', () => {
 	}, 60000);
 });
 ```
+
+<img src="./assets/test_example.gif" />
+
 
 ### Creating `__tests__` folder
 
