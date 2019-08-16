@@ -49,7 +49,7 @@ Triggers with right click on the element and choose proper verify action.
 
 ## Installation
 
-### Google Web Store
+### Google Web Store
 [Install on Chrome Web Store](https://chrome.google.com/webstore/detail/product-hunt-trending-tab/kfdccmmkggolbggggimdgbfgfgalgkjo)   
 
 <a href="https://chrome.google.com/webstore/detail/product-hunt-trending-tab/kfdccmmkggolbggggimdgbfgfgalgkjo"><img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_128x128.png" width="48" /></a>
