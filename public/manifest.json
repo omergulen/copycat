@@ -1,7 +1,7 @@
 {
   "short_name": "Create a test code without writing a line of code.",
   "name": "Testing Extension",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "manifest_version": 2,
   "icons": {
     "32": "icon32.png",
