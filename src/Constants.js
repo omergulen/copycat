@@ -1,37 +1,42 @@
+// Keys which are not characters
 export const keyCommands = [
-    'Enter',
-    'Backspace',
-    'Tab',
-    'Meta',
-    'Escape',
-    'Alt',
-    'Control',
-    'Shift',
-    'CapsLock'
+    "Enter",
+    "Backspace",
+    "Tab",
+    "Meta",
+    "Escape",
+    "Alt",
+    "Control",
+    "Shift",
+    "CapsLock"
 ];
 
+// Keys which can be combined
 export const combinationKeys = [
-    'Meta',
-    'Alt',
-    'Control',
-    'Shift'
+    "Meta",
+    "Alt",
+    "Control",
+    "Shift"
 ];
 
+// The events which will be recorded
 export const captureEvents = [
-    'keydown',
-    'mousedown',
-    'mouseup'
+    "keydown",
+    "mousedown",
+    "mouseup"
 ];
 
+// Unique selector configuration
 export const selectorOptions = {
     selectorTypes: [
-        'ID',
-        'Class',
-        'Tag',
-        'NthChild'
+        "ID",
+        "Class",
+        "Tag",
+        "NthChild"
     ]
 };
 
+// Command box colors according to the action
 export const eventColors = {
     "mousedown": "#fff0fe",
     "click": "#f0f4ff",
@@ -45,4 +50,5 @@ export const eventColors = {
     "click-page-change": "#d7ffdc"
 }
 
+// Chrome.storage key
 export const storageKey = "commands";

@@ -7,10 +7,7 @@ import beautify from 'js-beautify';
 
 import { keyCommands, captureEvents, selectorOptions, storageKey, combinationKeys } from './Constants';
 import Generator from './Generator';
-import "./content.css";
-
 import Commands from './Commands';
-
 
 const app = document.createElement('div');
 app.id = "testing-extension";
@@ -18,14 +15,20 @@ app.id = "testing-extension";
 class Main extends React.Component {
 
   constructor(props) {
+    // Inheritance
     super(props);
+
+    // Method bindings
     this.verify = this.verify.bind(this);
     this.prepareToAddStorage = this.prepareToAddStorage.bind(this);
+
+    // Initial state definition
     this.state = {
       step: 1,
       paused: false
     };
 
+    // Message listener for "verify-*" events
     chrome.runtime.onMessage.addListener(
       (request, sender, sendResponse) => {
         if (request.verify) {
@@ -36,7 +39,7 @@ class Main extends React.Component {
   }
 
   componentDidMount = () => {
-    // APP STYLE TOGGLE STATE
+    // Extension toggle handler
     chrome.storage.sync.get(['toggle', 'paused'], function (res) {
       app.style.display = res.toggle;
       if (res.toggle === 'block') {
@@ -46,13 +49,15 @@ class Main extends React.Component {
       }
     });
 
+    // Extension "puased" state updater
     let self = this;
     chrome.storage.sync.get('paused', function (res) {
       self.setState({
         paused: res.paused
       })
     });
-    // RECORDING STATE
+
+    // Extension "recording" state handler
     chrome.storage.sync.get('recording', function (res) {
       switch (res.recording) {
         case 1:
@@ -81,20 +86,20 @@ class Main extends React.Component {
     });
   }
 
-  sendMessageToBackground = (msg, testName) => {
-    chrome.runtime.sendMessage({ downloadContent: msg, testName: testName }, function (response) {
+  // Sends message to background.js
+  sendMessageToBackground = (msg) => {
+    chrome.runtime.sendMessage({ downloadContent: msg }, function (response) {
       return;
     });
   }
 
+  // Handling "verify-*" actions
   verify(data) {
     let selection = document.getSelection();
     let node = selection.baseNode.parentNode;
     let newEntry;
     switch (data.menuItemId) {
       case "verify-text":
-        // Get text from document.getSelection();
-        // var text = baseNode.textContent.trim().slice(selection.baseOffset, selection.extentOffset);
         newEntry = {
           type: data.menuItemId,
           selector: unique(node, selectorOptions),
@@ -120,12 +125,14 @@ class Main extends React.Component {
         };
         break;
       default:
-        console.log("WTF")
+        // if the action is "verify" but not defined, it logs to the console WTF!
+        console.log("WTF!")
         return;
     }
     this.addToStorage(newEntry);
   }
 
+  // Is "#element" is in "el"
   isRecursivelyInId(el, id) {
     if (el.id === id) return true;
 
@@ -138,6 +145,7 @@ class Main extends React.Component {
     return false;
   }
 
+  // .length  without nulls
   calculateStoreLengthWithoutNulls = () => {
     let l = 0;
     this.state.storeArray.forEach(element => {
@@ -148,10 +156,12 @@ class Main extends React.Component {
     return l;
   }
 
+  // Distance of 2 coordinates
   distance = (a, b) => {
     return Math.sqrt(Math.pow((a.x - b.x), 2) + Math.pow((a.y - b.y), 2))
   }
 
+  // Adding prepared actions to state and store
   addToStorage = (entry) => {
     let self = this;
     chrome.storage.sync.get(storageKey, function (result) {
@@ -244,12 +254,14 @@ class Main extends React.Component {
       // update the state
       self.setState({ storeArray });
 
+      // update the store
       chrome.storage.sync.set(jsonObj, function () {
         return
       });
     });
   }
 
+  // Prepare actions before adding them to state and store
   prepareToAddStorage(e) {
     if (!this.isRecursivelyInId(e.target, 'testing-extension')) {
       let commands = [];
@@ -279,6 +291,7 @@ class Main extends React.Component {
 
   }
 
+  // Remove specific action from state and store
   remove = (id) => {
     let self = this;
     chrome.storage.sync.get(storageKey, function (result) {
@@ -298,10 +311,13 @@ class Main extends React.Component {
     });
   }
 
+  // Start recording
   record = () => {
     captureEvents.forEach(event => {
       window.addEventListener(event, this.prepareToAddStorage)
     });
+
+    // Special case "page-change" event handler
     window.onbeforeunload = (e) => {
       let newEntry = {
         type: 'page-change',
@@ -314,6 +330,7 @@ class Main extends React.Component {
     this.setState({ paused: false });
   }
 
+  // Stop recording
   stop = () => {
     window.onbeforeunload = null;
     captureEvents.forEach(event => {
@@ -321,6 +338,7 @@ class Main extends React.Component {
     });
   }
 
+  // Reset state and the store
   reset = () => {
     this.setState({ storeArray: [] }, () => {
       var jsonObj = {};
@@ -331,6 +349,7 @@ class Main extends React.Component {
     })
   }
 
+  // Map actions to jest-puppeteer code and call download prompt method (in background.js)
   save = () => {
     let initURL = '';
     chrome.storage.sync.get('initURL', (res) => {
@@ -342,37 +361,43 @@ class Main extends React.Component {
       var gen = new Generator();
       let code = gen.generatePuppeteerCode(storeArray, initURL);
       let beautifiedCode = beautify(code, { indent_size: 2, space_in_empty_paren: true });
-      self.sendMessageToBackground(beautifiedCode, "test_name.js");
+      self.sendMessageToBackground(beautifiedCode);
     });
   }
 
+  // Record button handler
   recordHandler = () => {
     this.record();
     this.storeRecordingState(2);
   }
 
+  // Stop button handler
   stopHandler = () => {
     this.stop();
     this.storeRecordingState(3);
   }
 
+  // Resume button handler
   resumeHandler = () => {
     this.record();
     this.storePausedState(false);
     this.storeRecordingState(2);
   }
 
+  // Pause button handler
   pauseHandler = () => {
     this.stop();
     this.storePausedState(true);
     this.storeRecordingState(2);
   }
 
+  // Reset button handler
   resetHandler = () => {
     this.reset();
     this.storeRecordingState(1);
   }
 
+  // Save recording state
   storeRecordingState = (recordingState) => {
     let self = this;
     chrome.storage.sync.set({ recording: recordingState }, () => {
@@ -380,6 +405,7 @@ class Main extends React.Component {
     })
   }
 
+  // Save recording state
   storePausedState = (paused) => {
     let self = this;
     chrome.storage.sync.set({ paused }, () => {
@@ -387,6 +413,7 @@ class Main extends React.Component {
     })
   }
 
+  // Render the DOM
   render() {
     return (
       <div className={'my-extension'}>
@@ -431,18 +458,17 @@ class Main extends React.Component {
             </div>
           </div>
           {this.state.storeArray ? <Commands remove={this.remove} btnClickHndlr={this.buttonClickHandler} commands={this.state.storeArray} /> : ''}
-
         </div>
-
       </div>
     )
   }
 }
 
+// Add extension to the page
 document.body.appendChild(app);
 ReactDOM.render(<Main />, app);
 
-
+// Toggle listener (Extension icon click handler)
 chrome.runtime.onMessage.addListener(
   function (request, sender, sendResponse) {
     if (request.message === "clicked_browser_action") {
@@ -451,6 +477,7 @@ chrome.runtime.onMessage.addListener(
   }
 );
 
+// Toggle handler 
 function toggle() {
   if (app.style.display === "none") {
     chrome.storage.sync.set({ toggle: 'block' }, function () {

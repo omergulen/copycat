@@ -12,7 +12,7 @@
   background-color: #fff;
   z-index: 999999999 !important;
   border-left: 1px solid #ddd;
-  box-shadow: -4px 10px 10px rgba(0,0,0,0.2);
+  box-shadow: -4px 10px 10px rgba(0, 0, 0, 0.2);
   height: 100vh;
 }
 
@@ -73,11 +73,11 @@
   background-color: #fff;
 }
 
-#testing-extension .app-subtitle-recording{
+#testing-extension .app-subtitle-recording {
   position: relative;
 }
 
-#testing-extension .app-subtitle-recording:before{
+#testing-extension .app-subtitle-recording:before {
   content: "";
   position: absolute;
   left: -14px;

@@ -10,7 +10,7 @@ export default class Commands extends Component {
       if (event) {
         commands.push(
           <div className="app-action" style={{
-            backgroundColor: eventColors[event.type] 
+            backgroundColor: eventColors[event.type]
           }}>
             <div className="app-action-type">{event.type.toUpperCase()}</div>
             <div className="app-action-target">{event.selector}</div>
@@ -26,19 +26,25 @@ export default class Commands extends Component {
         )
       }
     }
+
     return (
+
       <div>
         {commands.reverse()}
       </div>
+
     )
 
   }
 
   render() {
+
     return (
+
       <div className={"app-actions"}>
         {this._commandsHandler()}
       </div>
+
     )
   }
 }

@@ -16,7 +16,7 @@ class Generator {
 
     addRulesInner(rules) {
         rules.forEach(rule => {
-            this.code += rule + '';
+            this.code += rule;
         });
     }
 
@@ -90,7 +90,7 @@ class Generator {
                     this.code += `await page.mouse.move(${command.data.mousePos.x},${command.data.mousePos.y})`;
                     this.code += `await page.mouse.down()`;
                     this.code += `await page.mouse.move(${command.data.mouseTarget.x},${command.data.mouseTarget.y})`;
-                    this.code += `await page.mouse.up()`
+                    this.code += `await page.mouse.up()`;
                     break;
             }
         }
@@ -115,7 +115,6 @@ class Generator {
     generatePuppeteerCode(commands, initURL) {
         this.initURL = initURL;
         this.addDescription("Test 1", commands);
-        // this.addIt('DESCRIPTION', commands);
         return this.code;
     }
 }
