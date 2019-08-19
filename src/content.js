@@ -3,6 +3,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 import unique from 'unique-selector';
+import beautify from 'js-beautify';
 
 import { keyCommands, captureEvents, selectorOptions, storageKey, combinationKeys } from './Constants';
 import Generator from './Generator';
@@ -339,8 +340,9 @@ class Main extends React.Component {
     chrome.storage.sync.get([storageKey], function (result) {
       var storeArray = result[storageKey] ? result[storageKey] : [];
       var gen = new Generator();
-
-      self.sendMessageToBackground(gen.generatePuppeteerCode(storeArray, initURL), "test_name.js");
+      let code = gen.generatePuppeteerCode(storeArray, initURL);
+      let beautifiedCode = beautify(code, { indent_size: 2, space_in_empty_paren: true });
+      self.sendMessageToBackground(beautifiedCode, "test_name.js");
     });
   }
 

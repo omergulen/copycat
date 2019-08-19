@@ -16,7 +16,7 @@ class Generator {
 
     addRulesInner(rules) {
         rules.forEach(rule => {
-            this.code += '\t\t' + rule + '\n';
+            this.code += rule + '';
         });
     }
 
@@ -25,19 +25,19 @@ class Generator {
             var rules = this.rules[key];
             switch (key) {
                 case 'beforeAll':
-                    this.code += `\tbeforeAll(async () => {\n`;
+                    this.code += `beforeAll(async () => {`;
                     this.addRulesInner(rules);
-                    this.code += `\t});\n\n`;
+                    this.code += `});`;
                     break;
                 case 'afterAll':
-                    this.code += `\tafterAll(async () => {\n`;
+                    this.code += `afterAll(async () => {`;
                     this.addRulesInner(rules);
-                    this.code += `\t});\n\n`;
+                    this.code += `});`;
                     break;
                 case 'beforeEach':
-                    this.code += `\tbeforeEach(async () => {\n`;
+                    this.code += `beforeEach(async () => {`;
                     this.addRulesInner(rules);
-                    this.code += `\t};\n\n`;
+                    this.code += `};`;
                     break;
             }
         }
@@ -47,68 +47,68 @@ class Generator {
         if (command && command.type) {
             switch (command.type) {
                 case 'click':
-                    this.code += `\t\tawait page.click('${command.selector}');\n`;
+                    this.code += `await page.click('${command.selector}');`;
                     break;
                 case 'keydown':
                     if (keyCommands.includes(command.data.key)) {
-                        this.code += `\t\tawait page.keyboard.press('${command.data.key}');\n`;
+                        this.code += `await page.keyboard.press('${command.data.key}');`;
                     } else {
-                        this.code += `\t\tawait page.type('${command.selector}', '${command.data.key}');\n`
+                        this.code += `await page.type('${command.selector}', '${command.data.key}');`
                     }
                     break;
                 case 'verify-text':
-                    this.code += `\t\tvar textContent = await page.$$eval('${command.selector}', el => el[0].textContent)\n`;
-                    this.code += `\t\tvar finalTextContent = textContent.trim();\n`;
-                    this.code += `\t\texpect(finalTextContent).toBe('${command.data.key}');\n`;
+                    this.code += `var textContent = await page.$$eval('${command.selector}', el => el[0].textContent)`;
+                    this.code += `var finalTextContent = textContent.trim();`;
+                    this.code += `expect(finalTextContent).toBe('${command.data.key}');`;
                     break;
                 case 'verify-dom':
-                    this.code += `\t\tvar elCount = await page.$$eval('${command.selector}', el => el.length);\n`
-                    this.code += `\t\texpect(elCount).toBeGreaterThan(0);\n`;
+                    this.code += `var elCount = await page.$$eval('${command.selector}', el => el.length);`
+                    this.code += `expect(elCount).toBeGreaterThan(0);`;
                     break;
                 case 'verify-link':
-                    this.code += `\t\tvar nodeLink = await page.$$eval('${command.selector}', el => el[0].href)\n`;
-                    this.code += `\t\texpect(nodeLink).toBe('${command.data.key}');\n`;
+                    this.code += `var nodeLink = await page.$$eval('${command.selector}', el => el[0].href)`;
+                    this.code += `expect(nodeLink).toBe('${command.data.key}');`;
                     break;
                 case 'page-change':
-                    this.code += `\t\tawait page.waitForNavigation({ waitUntil: 'load' });\n`
+                    this.code += `await page.waitForNavigation({ waitUntil: 'load' });`
                     break;
                 case 'click-page-change':
-                    this.code += `\t\tawait Promise.all([\n`;
-                    this.code += `\t\t\tpage.click('${command.selector}'),\n`;
-                    this.code += `\t\t\tpage.waitForNavigation()\n\t\t]);\n`;
+                    this.code += `await Promise.all([`;
+                    this.code += `page.click('${command.selector}'),`;
+                    this.code += `page.waitForNavigation()]);`;
                     break;
                 case 'combined-keydown':
                     command.data.commands.forEach(com => {
-                        this.code += `\t\tawait page.keyboard.down('${com}');\n`
+                        this.code += `await page.keyboard.down('${com}');`
                     });
-                    this.code += `\t\tawait page.keyboard.press('${command.data.key.slice(-1)}');\n`;
+                    this.code += `await page.keyboard.press('${command.data.key.slice(-1)}');`;
                     command.data.commands.forEach(com => {
-                        this.code += `\t\tawait page.keyboard.up('${com}');\n`
+                        this.code += `await page.keyboard.up('${com}');`
                     });
                     break;
                 case 'drag-and-drop':
-                    this.code += `\t\tawait page.mouse.move(${command.data.mousePos.x},${command.data.mousePos.y})\n`;
-                    this.code += `\t\tawait page.mouse.down()\n`;
-                    this.code += `\t\tawait page.mouse.move(${command.data.mouseTarget.x},${command.data.mouseTarget.y})\n`;
-                    this.code += `\t\tawait page.mouse.up()\n`
+                    this.code += `await page.mouse.move(${command.data.mousePos.x},${command.data.mousePos.y})`;
+                    this.code += `await page.mouse.down()`;
+                    this.code += `await page.mouse.move(${command.data.mouseTarget.x},${command.data.mouseTarget.y})`;
+                    this.code += `await page.mouse.up()`
                     break;
             }
         }
     }
 
     addIt(description, commands) {
-        this.code += `\tit('${description}', async () => {\n`;
+        this.code += `it('${description}', async () => {`;
         commands.forEach(command => {
             this.addCommand(command);
         });
-        this.code += `\t}, 60000);\n`;
+        this.code += `}, 60000);`;
     }
 
     addDescription(description, commands) {
-        this.code += `describe('${description}', () => {\n`;
+        this.code += `describe('${description}', () => {`;
         this.addRules();
         this.addIt('Test 1 - 1', commands);
-        this.code += `});\n`;
+        this.code += `});`;
     }
 
 
