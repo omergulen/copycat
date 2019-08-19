@@ -1,6 +1,6 @@
 [![Chrome Web Store](https://img.shields.io/chrome-web-store/v/dlbnejfbjfikckofdndbjndhhbplmnpj.svg?colorB=%234FC828&style=flat)](https://chrome.google.com/webstore/detail/testing-extension/dlbnejfbjfikckofdndbjndhhbplmnpj)
-[![Chrome Web Store Rating](https://img.shields.io/chrome-web-store/stars/ibomigipadcieapbemkegkmadbbanbgm.svg?colorB=%234FC828&label=rating&style=flat)](https://chrome.google.com/webstore/detail/product-hunt-trending-tab/kfdccmmkggolbggggimdgbfgfgalgkjo/reviews)
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/omergulen/testing-extension)
+[![Chrome Web Store Rating](https://img.shields.io/chrome-web-store/stars/ibomigipadcieapbemkegkmadbbanbgm.svg?colorB=%234FC828&label=rating&style=flat)](https://chrome.google.com/webstore/detail/testing-extension/dlbnejfbjfikckofdndbjndhhbplmnpj)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/omergulen/testing-extension/blob/master/LICENSE)
 
 # Testing Extension
 
@@ -50,9 +50,9 @@ Triggers with right click on the element and choose proper verify action.
 ## Installation
 
 ### Google Web Store
-[Install on Chrome Web Store](https://chrome.google.com/webstore/detail/product-hunt-trending-tab/kfdccmmkggolbggggimdgbfgfgalgkjo)   
+[Install on Chrome Web Store](https://chrome.google.com/webstore/detail/testing-extension/dlbnejfbjfikckofdndbjndhhbplmnpj)   
 
-<a href="https://chrome.google.com/webstore/detail/product-hunt-trending-tab/kfdccmmkggolbggggimdgbfgfgalgkjo"><img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_128x128.png" width="48" /></a>
+<a href="https://chrome.google.com/webstore/detail/testing-extension/dlbnejfbjfikckofdndbjndhhbplmnpj"><img src="https://raw.githubusercontent.com/alrra/browser-logos/master/src/chrome/chrome_128x128.png" width="48" /></a>
 
 or 
 
