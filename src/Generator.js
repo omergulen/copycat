@@ -57,7 +57,7 @@ class Generator {
                     }
                     break;
                 case 'verify-text':
-                    this.code += `var textContent = await page.$$eval('${command.selector}', el => el[0].textContent)`;
+                    this.code += `var textContent = await page.$$eval('${command.selector}', el => el[0].textContent);`;
                     this.code += `var finalTextContent = textContent.trim();`;
                     this.code += `expect(finalTextContent).toBe('${command.data.key}');`;
                     break;
