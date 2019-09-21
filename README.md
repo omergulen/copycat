@@ -2,7 +2,7 @@
 [![Chrome Web Store Rating](https://img.shields.io/chrome-web-store/stars/ibomigipadcieapbemkegkmadbbanbgm.svg?colorB=%234FC828&label=rating&style=flat)](https://chrome.google.com/webstore/detail/testing-extension/dlbnejfbjfikckofdndbjndhhbplmnpj)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg?style=flat)](https://github.com/omergulen/testing-extension/blob/master/LICENSE)
 
-# Testing Extension
+# Copycat - Testing Extension
 
 <img src="./public/icon128.png" />
 
@@ -59,9 +59,9 @@ or
 ### Manual Installation
 
 ```
-git clone https://github.com/omergulen/testing-extension.git
+git clone https://github.com/omergulen/copycat.git
 ```
-Go to `testing-extension` directory run
+Go to `copycat` directory run
 
 ```
 yarn install
@@ -72,7 +72,7 @@ yarn build
 ```
 You will see a `build` folder generated inside `[PROJECT_HOME]`
 
-#### Adding Testing Extension to Chrome
+#### Adding Copycat to Chrome
 
 In Chrome browser, go to `chrome://extensions` page and switch on developer mode. This enables the ability to locally install a Chrome extension.
 
@@ -119,9 +119,15 @@ module.exports = {
 }
 ```
 
+
+### Creating `__tests__` folder
+
+To work with default `jest-puppeteer` preset, you need to put your test files into the `__tests__` folder in the root of your testing environment.
+
+
 ### Basic Test Output Code
 
-Following test example in the GIF will generate such code. It starts in [my GitHub Profile](https://github.com/omergulen) and clicks one of the pinned repositories (testing-extension) and when page changes it checks for the repository title's `href` is `https://github.com/omergulen/testing-extension` or not.
+Following test example in the GIF will generate such code. It starts in [my GitHub Profile](https://github.com/omergulen) and clicks one of the pinned repositories (testing-extension) and when page changes it checks for the repository title's `href` is `https://github.com/omergulen/copycat` or not.
 
 
 ```
@@ -136,17 +142,14 @@ describe('Test 1', () => {
 			page.waitForNavigation()
 		]);
 		var nodeLink = await page.$$eval('strong > a', el => el[0].href)
-		expect(nodeLink).toBe('https://github.com/omergulen/testing-extension');
+		expect(nodeLink).toBe('https://github.com/omergulen/copycat');
 	}, 60000);
 });
 ```
 
+
 <img src="./assets/test_example.gif" />
 
-
-### Creating `__tests__` folder
-
-To work with default `jest-puppeteer` preset, you need to put your test files into the `__tests__` folder in the root of your testing environment.
 
 ### Update Puppeteer configuration _(optional)_
 

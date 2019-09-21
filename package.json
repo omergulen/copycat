@@ -1,6 +1,6 @@
 {
-  "name": "testing-extension",
-  "version": "1.0.1",
+  "name": "copycat",
+  "version": "1.0.2",
   "private": false,
   "dependencies": {
     "autoprefixer": "7.1.6",
