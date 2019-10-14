@@ -25,7 +25,8 @@ class Main extends React.Component {
     // Initial state definition
     this.state = {
       step: 1,
-      paused: false
+      paused: false,
+      copied: false,
     };
 
     // Message listener for "verify-*" events
@@ -340,7 +341,7 @@ class Main extends React.Component {
 
   // Reset state and the store
   reset = () => {
-    this.setState({ storeArray: [] }, () => {
+    this.setState({ storeArray: [], copied: false }, () => {
       var jsonObj = {};
       jsonObj[storageKey] = [];
       chrome.storage.sync.set(jsonObj, function () {
@@ -362,6 +363,29 @@ class Main extends React.Component {
       let code = gen.generatePuppeteerCode(storeArray, initURL);
       let beautifiedCode = beautify(code, { indent_size: 2, space_in_empty_paren: true });
       self.sendMessageToBackground(beautifiedCode);
+    });
+  }
+
+  copy = () => {
+    let initURL = '';
+    chrome.storage.sync.get('initURL', (res) => {
+      initURL = res.initURL;
+    })
+    let self = this;
+    chrome.storage.sync.get([storageKey], function (result) {
+      var storeArray = result[storageKey] ? result[storageKey] : [];
+      var gen = new Generator();
+      let code = gen.generatePuppeteerCode(storeArray, initURL);
+      let beautifiedCode = beautify(code, { indent_size: 2, space_in_empty_paren: true });
+
+      const tempInput = document.createElement("textarea");
+      tempInput.value = beautifiedCode;
+      document.body.appendChild(tempInput);
+      tempInput.select();
+      document.execCommand("copy");
+      document.body.removeChild(tempInput);
+
+      self.setState({ copied: true })
     });
   }
 
@@ -450,10 +474,13 @@ class Main extends React.Component {
               <div className="app-buttons">
                 <button onClick={this.resetHandler} className="app-ghost-button for-reset">
                   Reset
-          </button>
+                </button>
                 <button onClick={this.save} className="app-ghost-button for-save">
                   Save
-          </button>
+                </button>
+                <button onClick={this.copy} className="app-ghost-button for-copy">
+                  {this.state.copied ? 'Copied!' : 'Copy'}
+                </button>
               </div>
             </div>
           </div>
