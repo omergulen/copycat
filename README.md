@@ -4,7 +4,7 @@
 
 # Copycat - Testing Extension
 
-<img src="./public/icon128.png" />
+<img src="./public/copycat_logo.png" />
 
 ## (for jest-puppeteer)
 This extension is built to ease creating web tests. It is like Selenium-IDE, but for jest-puppeteer (for now).
