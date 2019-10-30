@@ -1,12 +1,15 @@
 {
   "short_name": "Create a test code without writing a line of code.",
   "name": "Copycat - Testing Extension",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "manifest_version": 2,
   "icons": {
     "32": "icon32.png",
     "64": "icon64.png",
-    "128": "icon128.png"
+    "128": "icon128.png",
+    "256": "icon256.png",
+    "512": "icon512.png",
+    "1024": "icon1024.png"
   },
   "background": {
     "scripts": [
