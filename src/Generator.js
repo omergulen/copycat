@@ -62,11 +62,11 @@ class Generator {
                     this.code += `expect(finalTextContent).toBe('${command.data.key}');`;
                     break;
                 case 'verify-dom':
-                    this.code += `var elCount = await page.$$eval('${command.selector}', el => el.length);`
+                    this.code += `var elCount = await page.$$eval('${command.selector}', el => el.length);`;
                     this.code += `expect(elCount).toBeGreaterThan(0);`;
                     break;
                 case 'verify-link':
-                    this.code += `var nodeLink = await page.$$eval('${command.selector}', el => el[0].href)`;
+                    this.code += `var nodeLink = await page.$$eval('${command.selector}', el => el[0].href);`;
                     this.code += `expect(nodeLink).toBe('${command.data.key}');`;
                     break;
                 case 'page-change':
@@ -87,10 +87,10 @@ class Generator {
                     });
                     break;
                 case 'drag-and-drop':
-                    this.code += `await page.mouse.move(${command.data.mousePos.x},${command.data.mousePos.y})`;
-                    this.code += `await page.mouse.down()`;
-                    this.code += `await page.mouse.move(${command.data.mouseTarget.x},${command.data.mouseTarget.y})`;
-                    this.code += `await page.mouse.up()`;
+                    this.code += `await page.mouse.move(${command.data.mousePos.x},${command.data.mousePos.y});`;
+                    this.code += `await page.mouse.down();`;
+                    this.code += `await page.mouse.move(${command.data.mouseTarget.x},${command.data.mouseTarget.y});`;
+                    this.code += `await page.mouse.up();`;
                     break;
             }
         }
