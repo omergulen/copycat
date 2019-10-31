@@ -37,7 +37,7 @@ chrome.contextMenus.onClicked.addListener(sendMessageToTester);
 
 // Context menu parent
 chrome.contextMenus.create({
-   "title": "Test Extension",
+   "title": "Copycat - Testing Extension",
    "id": "parent",
    "contexts": ["all", "link"]
 });
